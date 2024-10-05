@@ -42,9 +42,17 @@
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            box-sizing: border-box;
         }
 
-        button {
+        .button-container {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically */
+            gap: 10px; /* Space between buttons */
+        }
+
+        /* Shared button styles */
+        .btn {
             width: 100%;
             padding: 10px;
             background-color: #4CAF50;
@@ -53,9 +61,12 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
+            text-align: center;
+            text-decoration: none; /* Remove underline from link */
         }
 
-        button:hover {
+        .btn:hover {
             background-color: #45a049;
         }
 
@@ -64,62 +75,96 @@
             padding: 15px;
             background-color: #e7f3e7;
             border-radius: 5px;
+            display: none; /* Initially hidden */
         }
 
         .results p {
             margin: 5px 0;
             color: #333;
         }
+
+        .error {
+            color: red;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Loan Application Advisor</h2>
-        
-        <!-- Loan Amount Input -->
+
         <div class="input-group">
             <label for="loanAmount">Loan Amount:</label>
-            <input type="number" id="loanAmount" placeholder="Enter loan amount">
+            <input type="number" id="loanAmount" placeholder="Enter loan amount" min="0">
         </div>
 
-        <!-- Interest Rate Input -->
         <div class="input-group">
             <label for="interestRate">Interest Rate (%):</label>
-            <input type="number" id="interestRate" placeholder="Enter interest rate">
+            <input type="number" id="interestRate" placeholder="Enter interest rate" min="0" step="0.01">
         </div>
 
-        <!-- Loan Tenure Input -->
         <div class="input-group">
             <label for="loanTenure">Loan Tenure (Years):</label>
-            <input type="number" id="loanTenure" placeholder="Enter loan tenure in years">
+            <input type="number" id="loanTenure" placeholder="Enter loan tenure in years" min="1">
         </div>
 
-        <!-- Button to Calculate Payments -->
-        <button onclick="calculateLoan()">Calculate</button>
+        <div class="button-container">
+            <button class="btn" onclick="calculateLoan()">Calculate</button>
+            <a href="https://chatgpt.com/g/g-nlsXJmmR3-personal-loan-advisor-for-bank" class="btn" target="_blank">FAQ</a>
+        </div>
 
-        <!-- Results Section -->
         <div class="results" id="results">
             <p id="monthlyPayment">Monthly Payment: </p>
             <p id="totalPayment">Total Payment: </p>
+            <p id="totalInterest">Total Interest Paid: </p>
         </div>
+
+        <p id="error-message" class="error"></p>
     </div>
 
     <script>
         // JavaScript for Loan Calculation
         function calculateLoan() {
-            var loanAmount = document.getElementById('loanAmount').value;
-            var interestRate = document.getElementById('interestRate').value;
-            var loanTenure = document.getElementById('loanTenure').value;
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value);
+            const loanTenure = parseInt(document.getElementById('loanTenure').value);
+
+            // Clear previous results and error message
+            document.getElementById('error-message').innerText = '';
+            document.getElementById('results').style.display = 'none';
+
+            // Input validation
+            if (isNaN(loanAmount) || loanAmount <= 0) {
+                showError("Please enter a valid loan amount.");
+                return;
+            }
+            if (isNaN(interestRate) || interestRate < 0) {
+                showError("Please enter a valid interest rate.");
+                return;
+            }
+            if (isNaN(loanTenure) || loanTenure < 1) {
+                showError("Please enter a valid loan tenure.");
+                return;
+            }
 
             // Convert interest rate to monthly and calculate monthly payments
-            var monthlyRate = (interestRate / 100) / 12;
-            var numberOfPayments = loanTenure * 12;
-            var monthlyPayment = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numberOfPayments));
-            var totalPayment = monthlyPayment * numberOfPayments;
+            const monthlyRate = (interestRate / 100) / 12;
+            const numberOfPayments = loanTenure * 12;
+
+            const monthlyPayment = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numberOfPayments));
+            const totalPayment = monthlyPayment * numberOfPayments;
+            const totalInterest = totalPayment - loanAmount;
 
             // Display results
             document.getElementById('monthlyPayment').innerText = 'Monthly Payment: ' + monthlyPayment.toFixed(2);
             document.getElementById('totalPayment').innerText = 'Total Payment: ' + totalPayment.toFixed(2);
+            document.getElementById('totalInterest').innerText = 'Total Interest Paid: ' + totalInterest.toFixed(2);
+
+            document.getElementById('results').style.display = 'block'; // Show results
+        }
+
+        function showError(message) {
+            document.getElementById('error-message').innerText = message;
         }
     </script>
 </body>
