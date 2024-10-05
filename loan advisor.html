@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Application Advisor</title>
+    <style>
+        /* CSS Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f3e7;
+            border-radius: 5px;
+        }
+
+        .results p {
+            margin: 5px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Loan Application Advisor</h2>
+        
+        <!-- Loan Amount Input -->
+        <div class="input-group">
+            <label for="loanAmount">Loan Amount:</label>
+            <input type="number" id="loanAmount" placeholder="Enter loan amount">
+        </div>
+
+        <!-- Interest Rate Input -->
+        <div class="input-group">
+            <label for="interestRate">Interest Rate (%):</label>
+            <input type="number" id="interestRate" placeholder="Enter interest rate">
+        </div>
+
+        <!-- Loan Tenure Input -->
+        <div class="input-group">
+            <label for="loanTenure">Loan Tenure (Years):</label>
+            <input type="number" id="loanTenure" placeholder="Enter loan tenure in years">
+        </div>
+
+        <!-- Button to Calculate Payments -->
+        <button onclick="calculateLoan()">Calculate</button>
+
+        <!-- Results Section -->
+        <div class="results" id="results">
+            <p id="monthlyPayment">Monthly Payment: </p>
+            <p id="totalPayment">Total Payment: </p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for Loan Calculation
+        function calculateLoan() {
+            var loanAmount = document.getElementById('loanAmount').value;
+            var interestRate = document.getElementById('interestRate').value;
+            var loanTenure = document.getElementById('loanTenure').value;
+
+            // Convert interest rate to monthly and calculate monthly payments
+            var monthlyRate = (interestRate / 100) / 12;
+            var numberOfPayments = loanTenure * 12;
+            var monthlyPayment = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numberOfPayments));
+            var totalPayment = monthlyPayment * numberOfPayments;
+
+            // Display results
+            document.getElementById('monthlyPayment').innerText = 'Monthly Payment: ' + monthlyPayment.toFixed(2);
+            document.getElementById('totalPayment').innerText = 'Total Payment: ' + totalPayment.toFixed(2);
+        }
+    </script>
+</body>
+</html>
